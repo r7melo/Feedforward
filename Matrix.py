@@ -1,4 +1,7 @@
 from random import randint
+import math
+def sigmoid (x):
+    return 1 / (1 + math.exp(-x))
 
 class T: pass
 
@@ -32,18 +35,21 @@ class Matrix:
         self.data = data if type(data) is list else [[0 for j in self.range_j] for i in self.range_i]
 
     def randomize(self):
-        self.data = [[randint(-10000,10000) for j in self.range_j] for i in self.range_i]
+        self.data = [[randint(-10,10) for j in self.range_j] for i in self.range_i]
 
     def map(self, other, func):
 
-        if(self.rows != other.rows or self.cols != other.cols):
+        if other is not None and (self.rows != other.rows or self.cols != other.cols):
             raise ValueError("Matrix with different dimensions")
 
         matrix = Matrix((self.rows, self.cols))
 
         for i in self.range_i:
             for j in self.range_j:
-                matrix.data[i][j] = func(self.data[i][j], other.data[i][j])
+                if other == None:
+                    matrix.data[i][j] = func(matrix.data[i][j])
+                else:
+                    matrix.data[i][j] = func(self.data[i][j], other.data[i][j])
 
         return matrix
 
