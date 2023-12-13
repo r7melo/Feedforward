@@ -1,4 +1,3 @@
-#from scipy.special import expit
 from random import randint
 
 LEARNING_RATE = 0.5
