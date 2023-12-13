@@ -1,4 +1,4 @@
-from scipy.special import expit
+#from scipy.special import expit
 from random import randint
 
 LEARNING_RATE = 0.5
@@ -21,7 +21,7 @@ class Perceptron:
     def output(self) -> int:
         products = [ self.x[i]*self.w[i] for i in range(len(self.x)) ]
         S = sum(products+[self.bias])
-        return 1 if expit(S) >= 0.5 else 0
+        return 1 if S > 0  else 0
     
     def correction(self, target:float, prediction:float) -> None:
         erro = target - prediction
@@ -48,6 +48,7 @@ if __name__=="__main__":
         [0,0,0]
     ]
 
+    print("==== AND")
     score = 0
     while score < 4:
         score = 0
@@ -63,6 +64,31 @@ if __name__=="__main__":
 
         
         for data in dataEND:
+            perceptron.input([data[0], data[1]])
+            y = perceptron.output()
+            print(f"data={data} y={y}")
+
+            if data[2] == y: score+=1
+        
+        print("")
+
+    print("==== OR")
+
+    score = 0
+    while score < 4:
+        score = 0
+
+        perceptron = Perceptron()
+
+        for epoca in range(100000):
+            for amostra in dataOR:
+                data = [amostra[0], amostra[1]]
+                perceptron.input(data)
+                y = perceptron.output()
+                perceptron.correction(amostra[2], y)
+
+        
+        for data in dataOR:
             perceptron.input([data[0], data[1]])
             y = perceptron.output()
             print(f"data={data} y={y}")
