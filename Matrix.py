@@ -1,41 +1,25 @@
-from random import randint
-import math
-def sigmoid (x):
-    return 1 / (1 + math.exp(-x))
-
-class T: pass
-
-class Vector:
-
-    def __init__(self, matrix):
-        
-        self.matrix = matrix
-
-    def __mul__(self, other):
-
-        matrix = Matrix((self.matrix.rows, self.matrix.cols))
-
-        if self.matrix.rows != other.matrix.rows or self.matrix.cols != other.matrix.cols:
-            raise ValueError("Matrix with unacceptable dimensions")
-
-        for i in self.matrix.range_i:
-            for j in self.matrix.range_j:
-                matrix.data[i][j] = self.matrix.data[i][j] * other.matrix.data[i][j]
-
-        return matrix
-
 class Matrix:
 
-    def __init__(self, data):
+    """
+    Recebe uma lista unidimensional ou multimedição
+    Ex.: matrix pode ser [0], [0,1], [[0,9],[1,2],[2,1]]
 
-        self.rows = data[0] if type(data) is tuple else len(data) if type(data) is list else 0
-        self.cols = data[1] if type(data) is tuple else len(data[0]) if type(data) is list else 0
-        self.range_i = range(self.rows)
-        self.range_j = range(self.cols)
-        self.data = data if type(data) is list else [[0 for j in self.range_j] for i in self.range_i]
+    - Propriedades:
+        > Todas as sub-listas obrigatoriamente terão a mesma quantidade de colunas/linhas.
 
-    def randomize(self):
-        self.data = [[randint(-10,10) for j in self.range_j] for i in self.range_i]
+    """
+    def __init__(self, matrix:list):
+
+        self.rows:int = 0
+        self.cols:int = 0
+        self.range_i:range = None
+        self.range_j:range = None
+        self.data:list = []
+
+        if matrix is list:
+            if matrix fo
+        else:
+            raise ValueError("Object is not an array")
 
     def map(self, other, func):
 
@@ -106,4 +90,5 @@ class Matrix:
 
             return matrix
         
+
 

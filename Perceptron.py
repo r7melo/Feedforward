@@ -1,75 +1,68 @@
-import random
+from scipy.special import expit
+from random import randint
+
+LEARNING_RATE = 0.5
 
 
 class Perceptron:
     def __init__(self) -> None:
-        self.score = 0
-        self.threshold = None
+        self.score:int = 0
+        self.bias:float = None
+        self.x:list = []
+        self.y:list = []
 
-    def output(self, wList, xList, threshould) -> int:
-
-        if len(wList) != len(xList):
-            raise ValueError("Matrix with different dimensions")
-
-        sumWX = sum([(wList[j]*xList[j]) for j in range(0,len(wList))])
-
-        if sumWX <= threshould:
-            return 0
-        else:
-            return 1
+    def input(self, x:list) -> None:
+        self.x = x
         
-    def training(self, num_training):
-        
-        for i in range(0,num_training):
-            threshold = random.randint(0,10)
-            score = 0
+        if self.bias is None:
+            self.bias = randint(-100,100)
+            self.w = [randint(-100,100) for i in range(len(x))]
 
-            for i in [0,1]:
-                for ii in  [0,1]:
-                    for iii in [0,1]:
-                        output = perceptron.output(wList,[i,ii,iii], threshold)
-                        score += output
-
-            if self.score < score:
-                self.score = score
-                self.threshold = threshold
+    def output(self) -> int:
+        products = [ self.x[i]*self.w[i] for i in range(len(self.x)) ]
+        S = sum(products+[self.bias])
+        return 1 if S >= 0 else 0
+    
+    def correction(self, target:float, prediction:float) -> None:
+        erro = target - prediction
+        w = [(peso + LEARNING_RATE * erro * target) for peso in self.w]
+        self.w = w
 
 
 if __name__=="__main__":
 
-    """
-    A: A Nara fazendo comida?
-    B: A Nara no celular?
-    C: A Nara safadinha?
-    Output: Amo a Nara?
-    """
+    dataEND = [
+        [1,1,1],
+        [1,0,0],
+        [0,1,0],
+        [0,0,0]
+    ]
 
-    A = 5
-    B = -2
-    C = 8
-
-    wList = [A,B,C]
+    dataOR = [
+        [1,1,1],
+        [1,0,1],
+        [0,1,1],
+        [0,0,0]
+    ]
 
     perceptron = Perceptron()
-    perceptron.training(1000)
+    perceptron.input([1,1])
 
-    print(f"score:{perceptron.score} th:{perceptron.threshold}")
+    y = perceptron.output()
 
-    while True:
-            try:
-                A = int(input("Você ama a nara fazendo comida?"))
-                B = int(input("Você ama a nara pelo celular?"))
-                C = int(input("Você ama a nara safadinha?"))
-                
-                hasLoveForNara = perceptron.output(wList, [A,B,C], perceptron.threshold)
+    perceptron.correction(1, y)
 
-                if hasLoveForNara:
-                    print("Você ama a Nara! <3")
-                else:
-                    print("Que triste! :(")
-            except:
-                print("Repita a questão.")
+    for epoca in range(1000):
+        for amostra in dataEND:
+            data = [amostra[0], amostra[1]]
+            perceptron.input(data)
+            y = perceptron.output()
+            perceptron.correction(amostra[2], y)
+
     
+    for data in dataEND:
+        perceptron.input([data[0], data[1]])
+        y = perceptron.output()
+        print(f"data={data} y={y}")
 
-
-
+   
