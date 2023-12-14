@@ -10,30 +10,18 @@ class NetworkNeuralGrafics:
         self.data = [[1,1,1],[1,0,0],[0,1,0],[0,0,0]]
         self.perceptrons = [Perceptron() for i in range(10)]
         self.timeout = 0
-
-    def show(self):
-
-        #region DATA
-        for x,y,z in self.data:
-            if z == 1: glColor3f(0,0,255)
-            else: glColor3f(255,0,0)
-
-            glPointSize(10)
-            glBegin(GL_POINTS)
-            glVertex2f(x,y)
-            glEnd()
-
-        glBegin(GL_LINES)
-        #endregion
         
+    def perceptron_training_epoch(self):
         for perceptron in self.perceptrons:
-            #region PERCEPTRON
+            #region PERCEPTRON LERANING
             for amostra in self.data:
                 data = [amostra[0], amostra[1]]
                 perceptron.input(data)
                 _y = perceptron.output()
                 perceptron.correction(amostra[2], _y)
+            #endregion
 
+            perceptron.score = 0
             for amostra in self.data:
                 perceptron.input([amostra[0], amostra[1]])
                 y = perceptron.output()
@@ -42,32 +30,43 @@ class NetworkNeuralGrafics:
             
         self.perceptrons.sort(key=lambda p: p.score)
 
-        if self.timeout > 1000:
-            for perceptron in self.perceptrons:
-                perceptron.score = 0
 
-            [self.perceptrons.pop() for i in range(5)]
-            [self.perceptrons.append(Perceptron()) for i in range(5)]
-        
-        self.timeout += 1
+    def show(self):
+        glClearColor(0.2, 0.2, 0.2, 1.0)
+        #region DATA
+        for x,y,z in self.data:
+            if z == 1: 
+                glColor3f(0,0,255)
+            else: glColor3f(255,0,0)
 
-        # functions perceptron
-        glColor3f(0,255,0)
-        for i in range(10):
-            proportion = 6/10
-
-            x1 = i*proportion
-            x2 = i*proportion*2
-
-            f = lambda x: sum([x * A for A in self.perceptrons[0].w] + [self.perceptrons[0].bias])
-
-            glVertex2f(x1, f(x1))
-            glVertex2f(x2, f(x2))
+            glPointSize(10)
+            glBegin(GL_POINTS)
+            glVertex2f(x,y)
+            glEnd()
         #endregion
 
-        glEnd()
+        
+        for perceptron in self.perceptrons:
+
+            glColor3f(perceptron.color3f[0], perceptron.color3f[1], perceptron.color3f[2])
+            glBegin(GL_LINES)
+
+            # functions perceptron
+            for i in range(5):
+                proportion = 6/10
+
+                x1 = i*proportion
+                x2 = i*proportion*2
+
+                f = lambda x: sum([x * A for A in perceptron.w] + [perceptron.bias])
+
+                glVertex2f(x1, f(x1))
+                glVertex2f(x2, f(x2))
+
+            glEnd()
 
     def update(self):
+        self.perceptron_training_epoch()
         self.show()
         
 

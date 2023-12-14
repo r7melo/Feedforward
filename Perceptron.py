@@ -1,6 +1,6 @@
 from random import randint
 
-LEARNING_RATE = 0.5
+LEARNING_RATE = 0.3
 
 
 class Perceptron:
@@ -9,6 +9,8 @@ class Perceptron:
         self.bias:float = None
         self.x:list = []
         self.y:list = []
+
+        self.color3f = (randint(0, 255), randint(0, 255), randint(0, 255))
 
     def input(self, x:list) -> None:
         self.x = x
