@@ -72,27 +72,39 @@ class NetworkNeuralGrafics:
         
         for perceptron in perceptrons[:5]:
 
-            glColor3f(perceptron.color3f[0], perceptron.color3f[1], perceptron.color3f[2])
-            glBegin(GL_LINES)
+            proportion = 6/1000
+            for x in range(-1000, 1000):
 
-            # functions perceptron
-            for i in range(-1000,1000):
-                proportion = 6/1000
+                x1 = x*proportion
+                perceptron.
 
-                x1 = i*proportion
-                x2 = i*proportion*2
+                glColor3f(0,1,.5)
+                glPointSize(10)
+                glBegin(GL_POINTS)
+                glVertex2f(x1,2)
+                glEnd()
+
+            # glColor3f(perceptron.color3f[0], perceptron.color3f[1], perceptron.color3f[2])
+            # glBegin(GL_LINES)
+
+            # # functions perceptron
+            # for i in range(-1000,1000):
+            #     proportion = 6/1000
+
+            #     x1 = i*proportion
+            #     x2 = i*proportion*2
                 
-                perceptron.input([x1,0])
-                y1 = perceptron.output()
+            #     perceptron.input([x1,0])
+            #     y1 = perceptron.output()
 
-                perceptron.input([x2,0])
-                y2 = perceptron.output()
+            #     perceptron.input([x2,0])
+            #     y2 = perceptron.output()
 
-                glVertex2f(x1, y1)
-                glVertex2f(x2, y2)
+            #     glVertex2f(x1, y1)
+            #     glVertex2f(x2, y2)
 
 
-            glEnd()
+            # glEnd()
 
     def save_perceptrons(self):
         while True:
@@ -130,7 +142,7 @@ if __name__=="__main__":
     save.start()
      
     app = App()
-    app.screenSize = (900, 900)
+    app.screenSize = (500, 500)
     app.render.append(CartesianPlane())
     app.render.append(nng)
     app.run()
