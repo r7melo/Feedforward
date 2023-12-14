@@ -41,7 +41,8 @@ class NetworkNeuralGrafics:
             self.timeout = 0
             
             qtd_death = int(len(self.perceptrons)/2)
-            self.perceptrons = self.perceptrons[:qtd_death] + [Perceptron() for i in range(qtd_death)]
+            better = self.perceptrons[0]
+            self.perceptrons = self.perceptrons[:qtd_death] + [Perceptron(w=better.w) for i in range(qtd_death)]
             for p in self.perceptrons: p.score = 0
 
         self.timeout += 1
