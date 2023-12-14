@@ -1,4 +1,5 @@
-from random import randint
+from random import random, randint
+from scipy.special import expit
 
 LEARNING_RATE = 0.3
 
@@ -10,7 +11,7 @@ class Perceptron:
         self.x:list = []
         self.y:list = []
 
-        self.color3f = (randint(0, 255), randint(0, 255), randint(0, 255))
+        self.color3f = (random(), random(), random())
 
     def input(self, x:list) -> None:
         self.x = x
@@ -22,7 +23,7 @@ class Perceptron:
     def output(self) -> int:
         products = [ self.x[i]*self.w[i] for i in range(len(self.x)) ]
         S = sum(products+[self.bias])
-        return 1 if S > 0  else 0
+        return expit(S)
     
     def correction(self, target:float, prediction:float) -> None:
         erro = target - prediction
@@ -48,6 +49,8 @@ if __name__=="__main__":
         [0,1,1],
         [0,0,0]
     ]
+
+    dataT = [[1,1,1],[1,0,0],[0,1,0],[0,0,0],[0,2,1]]
 
     print("==== AND")
     score = 0
@@ -90,6 +93,31 @@ if __name__=="__main__":
 
         
         for data in dataOR:
+            perceptron.input([data[0], data[1]])
+            y = perceptron.output()
+            print(f"data={data} y={y}")
+
+            if data[2] == y: score+=1
+        
+        print("")
+
+    print("==== T")
+
+    score = 0
+    while score < 4:
+        score = 0
+
+        perceptron = Perceptron()
+
+        for epoca in range(100000):
+            for amostra in dataT:
+                data = [amostra[0], amostra[1]]
+                perceptron.input(data)
+                y = perceptron.output()
+                perceptron.correction(amostra[2], y)
+
+        
+        for data in dataT:
             perceptron.input([data[0], data[1]])
             y = perceptron.output()
             print(f"data={data} y={y}")

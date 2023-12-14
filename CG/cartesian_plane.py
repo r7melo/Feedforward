@@ -5,15 +5,16 @@ class CartesianPlane:
         pass
 
     def show(self):
+        glClearColor(0.2, 0.2, 0.2, 1.0)
         glBegin(GL_LINES)
-        # X
-        glColor3f(255,255,255)
-        glVertex2f(-6,0)
-        glVertex2f(6,0)
-        # Y
-        glColor3f(255,255,255)
-        glVertex2f(0,-6)
-        glVertex2f(0,6)
+        # # X
+        # glColor3f(255,255,255)
+        # glVertex2f(-6,0)
+        # glVertex2f(6,0)
+        # # Y
+        # glColor3f(255,255,255)
+        # glVertex2f(0,-6)
+        # glVertex2f(0,6)
 
         # Left
         glColor3f(255,255,255)
