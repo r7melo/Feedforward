@@ -56,7 +56,7 @@ class NetworkNeuralGrafics:
 
     def show(self):
 
-        perceptrons:list[Perceptron] = self.perceptrons.copy()
+        
         #region DATA
         for x,y,z in self.data:
             if z == 1: 
@@ -70,41 +70,27 @@ class NetworkNeuralGrafics:
         #endregion
 
         
-        for perceptron in perceptrons[:5]:
+        perceptron = self.perceptrons.copy()[0]
+        proportion = 6/20
+        for i in range(-19, 20):
+            for j in range(-19, 20):
 
-            proportion = 6/1000
-            for x in range(-1000, 1000):
 
-                x1 = x*proportion
-                perceptron.
+                x = i*proportion
+                y = j*proportion
 
-                glColor3f(0,1,.5)
+                perceptron.input([x,y])
+                S = perceptron.output()
+                _y = perceptron.activate(S)
+
+                if _y == 1: glColor3f(0.41,0.41,.99)
+                else: glColor3f(0.99, 0.41, 0.41)
+
                 glPointSize(10)
                 glBegin(GL_POINTS)
-                glVertex2f(x1,2)
+                glVertex2f(x,y)
                 glEnd()
-
-            # glColor3f(perceptron.color3f[0], perceptron.color3f[1], perceptron.color3f[2])
-            # glBegin(GL_LINES)
-
-            # # functions perceptron
-            # for i in range(-1000,1000):
-            #     proportion = 6/1000
-
-            #     x1 = i*proportion
-            #     x2 = i*proportion*2
-                
-            #     perceptron.input([x1,0])
-            #     y1 = perceptron.output()
-
-            #     perceptron.input([x2,0])
-            #     y2 = perceptron.output()
-
-            #     glVertex2f(x1, y1)
-            #     glVertex2f(x2, y2)
-
-
-            # glEnd()
+                    
 
     def save_perceptrons(self):
         while True:
