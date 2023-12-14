@@ -1,3 +1,4 @@
+import json
 import threading
 import time
 from OpenGL.GL import *
@@ -20,14 +21,16 @@ class NetworkNeuralGrafics:
             for amostra in self.data:
                 data = [amostra[0], amostra[1]]
                 perceptron.input(data)
-                _y = perceptron.output()
+                S = perceptron.output()
+                _y = perceptron.activate(S)
                 perceptron.correction(amostra[2], _y)
             #endregion
 
             for amostra in self.data:
                 perceptron.input([amostra[0], amostra[1]])
-                y = perceptron.output()
-                if amostra[2] == y: perceptron.score+=1
+                S = perceptron.output()
+                _y = perceptron.activate(S)
+                if amostra[2] == _y: perceptron.score+=1
 
     def perceptron_classification(self):
         self.perceptrons.sort(key=lambda p: p.score)
@@ -52,7 +55,7 @@ class NetworkNeuralGrafics:
 
     def show(self):
 
-        perceptrons = self.perceptrons.copy()
+        perceptrons:list[Perceptron] = self.perceptrons.copy()
         #region DATA
         for x,y,z in self.data:
             if z == 1: 
@@ -77,11 +80,12 @@ class NetworkNeuralGrafics:
 
                 x1 = i*proportion
                 x2 = i*proportion*2
+                
+                perceptron.input([x1,0])
+                y1 = perceptron.output()
 
-                f = lambda x: sum([x * A for A in perceptron.w] + [perceptron.bias])
-
-                y1 = f(x1)
-                y2 = f(x2)
+                perceptron.input([x2,0])
+                y2 = perceptron.output()
 
                 glVertex2f(x1, y1)
                 glVertex2f(x2, y2)
@@ -89,8 +93,20 @@ class NetworkNeuralGrafics:
 
             glEnd()
 
-        print([p.score for p in perceptrons[:5]])
-
+    def save_perceptrons(self):
+        while True:
+            with open('perceptrons.json', 'w') as arquivo:
+                pJson = [
+                    {
+                        "bias": p.bias,
+                        "w": [
+                            w for w in p.w    
+                        ],
+                    }
+                    for p in self.perceptrons
+                ]
+                json.dump(pJson, arquivo)
+            time.sleep(10)
 
     def traing(self):
         while True:
@@ -107,6 +123,10 @@ if __name__=="__main__":
     thread = threading.Thread(target=nng.traing)
     thread.daemon = True
     thread.start()
+
+    save = threading.Thread(target=nng.save_perceptrons)
+    save.daemon = True
+    save.start()
      
     app = App()
     app.screenSize = (900, 900)

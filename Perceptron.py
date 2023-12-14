@@ -5,11 +5,11 @@ LEARNING_RATE = 0.3
 
 
 class Perceptron:
-    def __init__(self) -> None:
+    def __init__(self, bias=None, w:list=[]) -> None:
         self.score:int = 0
-        self.bias:float = None
+        self.bias:float = bias
         self.x:list = []
-        self.y:list = []
+        self.w:list = w
 
         self.color3f = (random(), random(), random())
 
@@ -23,7 +23,10 @@ class Perceptron:
     def output(self) -> int:
         products = [ self.x[i]*self.w[i] for i in range(len(self.x)) ]
         S = sum(products+[self.bias])
-        return expit(S)
+        return S
+    
+    def activate(self, S):
+        return 1 if S >= 0 else 0
     
     def correction(self, target:float, prediction:float) -> None:
         erro = target - prediction
@@ -33,97 +36,3 @@ class Perceptron:
         bias = self.bias + LEARNING_RATE * erro * target
         self.bias
 
-
-if __name__=="__main__":
-
-    dataEND = [
-        [1,1,1],
-        [1,0,0],
-        [0,1,0],
-        [0,0,0]
-    ]
-
-    dataOR = [
-        [1,1,1],
-        [1,0,1],
-        [0,1,1],
-        [0,0,0]
-    ]
-
-    dataT = [[1,1,1],[1,0,0],[0,1,0],[0,0,0],[0,2,1]]
-
-    print("==== AND")
-    score = 0
-    while score < 4:
-        score = 0
-
-        perceptron = Perceptron()
-
-        for epoca in range(100000):
-            for amostra in dataEND:
-                data = [amostra[0], amostra[1]]
-                perceptron.input(data)
-                y = perceptron.output()
-                perceptron.correction(amostra[2], y)
-
-        
-        for data in dataEND:
-            perceptron.input([data[0], data[1]])
-            y = perceptron.output()
-            print(f"data={data} y={y}")
-
-            if data[2] == y: score+=1
-        
-        print("")
-
-    print("==== OR")
-
-    score = 0
-    while score < 4:
-        score = 0
-
-        perceptron = Perceptron()
-
-        for epoca in range(100000):
-            for amostra in dataOR:
-                data = [amostra[0], amostra[1]]
-                perceptron.input(data)
-                y = perceptron.output()
-                perceptron.correction(amostra[2], y)
-
-        
-        for data in dataOR:
-            perceptron.input([data[0], data[1]])
-            y = perceptron.output()
-            print(f"data={data} y={y}")
-
-            if data[2] == y: score+=1
-        
-        print("")
-
-    print("==== T")
-
-    score = 0
-    while score < 4:
-        score = 0
-
-        perceptron = Perceptron()
-
-        for epoca in range(100000):
-            for amostra in dataT:
-                data = [amostra[0], amostra[1]]
-                perceptron.input(data)
-                y = perceptron.output()
-                perceptron.correction(amostra[2], y)
-
-        
-        for data in dataT:
-            perceptron.input([data[0], data[1]])
-            y = perceptron.output()
-            print(f"data={data} y={y}")
-
-            if data[2] == y: score+=1
-        
-        print("")
-
-   
