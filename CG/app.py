@@ -12,6 +12,7 @@ class App:
         self.sum_rot_updown = 0
         self.current_mv_mat = (GLfloat * 16)()
         self.screenSize = (500, 500)
+        self.mouse = None
 
     def run(self):
         pygame.init()
@@ -38,6 +39,7 @@ class App:
             if pressed[pygame.K_ESCAPE]:
                 pygame.quit()
                 quit()
+
 
             glGetFloatv(GL_MODELVIEW_MATRIX, self.current_mv_mat)
             glLoadIdentity()
