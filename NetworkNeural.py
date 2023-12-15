@@ -94,6 +94,9 @@ class NetworkNeuralGrafics:
                 glEnd()
                     
 
+
+
+
     def save_perceptrons(self):
         with open('perceptrons.json', 'w') as arquivo:
             pJson = [
@@ -144,13 +147,13 @@ def append_data():
             pos = mouse["pos"]
             x = ((pos[0]-40)/420*12)-6
             y = (((pos[1]-40)/420*12)-6)*-1
-            data.append([x,y,1])
+            if -6 < x < 6 and -6 < y < 6: data.append([x,y,1])
 
         if mouse["right_button"]:
             pos = mouse["pos"]
             x = ((pos[0]-40)/420*12)-6
             y = (((pos[1]-40)/420*12)-6)*-1
-            data.append([x,y,0])
+            if -6 < x < 6 and -6 < y < 6: data.append([x,y,0])
 
     except:pass
 
