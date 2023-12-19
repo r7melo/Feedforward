@@ -5,7 +5,7 @@ from OpenGL.GL import *
 import pygame
 
 from Perceptron import Perceptron
-from CG import App, CartesianPlane
+from CG import App
 
 
 
@@ -23,16 +23,23 @@ class NetworkNeuralGrafics:
             for amostra in self.data:
                 data = [amostra[0], amostra[1]]
                 perceptron.input(data)
-                S = perceptron.output()
-                _y = perceptron.activate(S)
+                _y = perceptron.output()
                 perceptron.correction(amostra[2], _y)
             #endregion
+            
+            A = 1
+            B = 1
+
+            for i in self.data:
+                if i[:-1] == 1: A+=1
+                else: B+=1
 
             for amostra in self.data:
                 perceptron.input([amostra[0], amostra[1]])
-                S = perceptron.output()
-                _y = perceptron.activate(S)
-                if amostra[2] == _y: perceptron.score+=1
+                _y = perceptron.output()
+                if amostra[2] == _y and _y == 1: perceptron.score+= 100/A
+                if amostra[2] == _y and _y == 0: perceptron.score+= 100/B
+
 
     def perceptron_classification(self):
         self.perceptrons.sort(key=lambda p: p.score)
@@ -82,8 +89,7 @@ class NetworkNeuralGrafics:
                 y = j*proportion
 
                 perceptron.input([x,y])
-                S = perceptron.output()
-                _y = perceptron.activate(S)
+                _y = perceptron.output()
 
                 if _y == 1: glColor3f(0.41,0.41,.99)
                 else: glColor3f(0.99, 0.41, 0.41)
@@ -175,7 +181,6 @@ if __name__=="__main__":
      
     app = App()
     app.screenSize = (500, 500)
-    app.render.append(CartesianPlane())
     app.render.append(nng)
 
     mouse = threading.Thread(target=append_data)

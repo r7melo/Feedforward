@@ -7,8 +7,35 @@ from OpenGL.GLU import *
 class Mouse:
     def __init__(self):
         self.pos = None
-        self.left_button = None
-        self.right_button = None
+        self.left_button_down = None
+        self.right_button_down = None
+        self.left_button_up = None
+        self.right_button_up = None
+        self.left_button_activate = False
+        self.right_button_activate = False
+
+    def left_button_release(self):
+        if not self.left_button_activate and self.left_button_down:
+            self.left_button_activate = True
+            return True
+
+        elif self.left_button_activate and self.left_button_up:
+            self.left_button_activate = False
+            self.left_button_up = False
+
+        return False
+    
+    def right_button_release(self):
+        if not self.right_button_activate and self.right_button_down:
+            self.right_button_activate = True
+            return True
+        
+        elif self.right_button_activate and self.right_button_up:
+            self.right_button_activate = False
+            self.right_button_up = False
+
+        return False
+
         
 class Keyboard:
     def __init__(self):
@@ -41,11 +68,17 @@ class App:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                elif event.type == pygame.MOUSEBUTTONUP and self.mouse:
+                    if event.button == 1:
+                        self.mouse.left_button_up = True
+                    
+                    if event.button == 3:
+                        self.mouse.right_button_up = True
 
             if not self.mouse is None:
                 self.mouse.pos = pygame.mouse.get_pos()
-                self.mouse.left_button = pygame.mouse.get_pressed()[0]
-                self.mouse.right_button = pygame.mouse.get_pressed()[2]
+                self.mouse.left_button_down = pygame.mouse.get_pressed()[0]
+                self.mouse.right_button_down = pygame.mouse.get_pressed()[2]
             
             if not self.keyboard is None:
                 self.keyboard.key_press = pygame.key.get_pressed()

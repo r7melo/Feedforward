@@ -23,10 +23,8 @@ class Perceptron:
     def output(self) -> int:
         products = [ self.x[i]*self.w[i] for i in range(len(self.x)) ]
         S = sum(products+[self.bias])
-        return S
-    
-    def activate(self, S):
         return 1 if S >= 0 else 0
+        
     
     def correction(self, target:float, prediction:float) -> None:
         erro = target - prediction
