@@ -11,8 +11,6 @@ class Perceptron:
         self.x:list = []
         self.w:list = w
 
-        self.color3f = (random(), random(), random())
-
     def input(self, x:list) -> None:
         self.x = x
         

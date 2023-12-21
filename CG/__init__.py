@@ -1,1 +1,1 @@
-from CG.app import App, Mouse, Keyboard
+from CG.app import *
