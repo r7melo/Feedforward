@@ -4,91 +4,23 @@ import time
 from OpenGL.GL import *
 from Perceptron import Perceptron
 from CG import App, Mouse
-
-
+import numpy as np
 
 class NetworkNeural:
+    def __init__(self, sizes) -> None:
+        self.num_layers = len(sizes)
+        self.sizes = sizes
+        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
+        self.weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
     
-    def __init__(self) -> None:
-        self.data = [[0,0,0],[1,1,1],[-5,0,0]]
-        self.perceptrons = [Perceptron() for i in range(10)]
-        self.grid = []
-        self.epoch = 0
+    def sigmoid(self, z):
+        return 1/(1+np.exp(-z))
+    
+    def feedforward(self, a):
+        for b, w in zip(self.biases, self.weights):
+            a = self.sigmoid((w @ input) + b)
+        return a
 
-    def training(self):
-        while True:
-            for perceptron in self.perceptrons:
-                #region PERCEPTRON LERANING
-                for amostra in self.data:
-                    perceptron.input(amostra[:2])
-                    _y = perceptron.output()
-                    perceptron.correction(amostra[2], _y)
-                #endregion
-
-                for amostra in self.data:
-                    perceptron.input([amostra[0], amostra[1]])
-                    _y = perceptron.output()
-                    if amostra[2] == _y: perceptron.score+=1
-            
-
-            self.perceptrons.sort(key=lambda p: p.score)
-            self.perceptrons.reverse()
-            
-            if self.epoch > 10:
-                self.epoch = 0
-                
-                qtd_death = int(len(self.perceptrons)/2)
-                better = self.perceptrons[0]
-                self.perceptrons = self.perceptrons[:qtd_death] + [Perceptron(w=better.w) for i in range(qtd_death)]
-                for p in self.perceptrons: p.score = 0
-
-            self.epoch += 1
-
-            time.sleep(0.1)
-
-
-    def update_grid(self):
-        while True:
-            grid = []
-            perceptron = self.perceptrons.copy()[0]
-            proportion = 6/20
-            for i in range(-19, 20):
-                for j in range(-19, 20):
-
-
-                    x = i*proportion
-                    y = j*proportion
-
-                    perceptron.input([x,y])
-                    _y = perceptron.output()
-                    grid.append([x,y,_y])
-
-            self.grid = grid
-
-            time.sleep(1)
-
-    def update(self):
-        glClearColor(0.2, 0.2, 0.2, 1.0)
-
-        #region DATA
-        for x,y,_y in self.data:
-            if _y == 1: glColor3f(0,0,1)
-            else: glColor3f(1,0,0)
-
-            glPointSize(10)
-            glBegin(GL_POINTS)
-            glVertex2f(x,y)
-            glEnd()
-        #endregion
-        
-        for x,y,_y in self.grid:
-            if _y == 1: glColor3f(0.41,0.41,.99)
-            else: glColor3f(0.99, 0.41, 0.41)
-
-            glPointSize(10.5)
-            glBegin(GL_POINTS)
-            glVertex2f(x,y)
-            glEnd()
 
 
 
@@ -113,16 +45,8 @@ class Program:
         self.mouse.right_button_activate = right_button_activate
 
     def save_perceptrons(self):
-        with open('perceptrons.json', 'w') as arquivo:
-            pJson = [
-                {
-                    "bias": p.bias,
-                    "w": [
-                        w for w in p.w    
-                    ],
-                }
-                for p in self.network_neural.perceptrons
-            ]
+        with open('modelo.json', 'w') as arquivo:
+            pJson = []
             json.dump(pJson, arquivo)
         
         threading.Timer(10, self.save_perceptrons).start()
