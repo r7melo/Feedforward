@@ -2,17 +2,11 @@ import json
 import pygame
 from OpenGL.GL import *
 from CG import App
-from network_neural import NetworkNeural
-
-
-
-
 
 class Program:
     def __init__(self):
-        self.network_neural:NetworkNeural
-
-
+        pass
+    
     def mouse_button_up(self, event):
         if event.button == 1:
             print(f"Left: {event.pos}")
@@ -35,7 +29,6 @@ if __name__=="__main__":
     
 
     program = Program()
-    program.network_neural = NetworkNeural([2,2,1])
 
     app.event_actions[pygame.MOUSEBUTTONUP] = [program.mouse_button_up]
     app.start_thread(program.save_perceptrons, delay=10)
