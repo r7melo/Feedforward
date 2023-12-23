@@ -9,13 +9,10 @@ class NetworkNeural:
     def __init__(self, sizes) -> None:
         self.num_layers = len(sizes)
         self.sizes = sizes
-        # self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
-        # self.weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
-        self.biases = [np.random.randint(0,10, size=(y, 1)) for y in sizes[1:]]
-        self.weights = [np.random.randint(0,10, size=(y, x)) for x, y in zip(sizes[:-1], sizes[1:])]
+        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
+        self.weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
         
-        
-        self.learning_rate = 0.1
+        self.learning_rate = 0.3
     
     def sigmoid(self, z):
         return 1/(1+np.exp(-z))
@@ -31,10 +28,17 @@ class NetworkNeural:
     def backpropagation(self, target, prediction):
         error = target - prediction
 
-        for b, w in zip(self.biases, self.weights):
-            derivative_output = self.sigmoid_derivative(prediction)
-            delta_output = error * derivative_output
-            print(delta_output)
+        delta_prediction = self.sigmoid_derivative(prediction)
+        delta_target = self.sigmoid_derivative(target)
+        delta_error = delta_prediction - delta_target
+        
+        for i, w in enumerate(self.weights):
+            
+            delta_w = self.sigmoid_derivative(w)
+            self.weights[i] = w + delta_error * self.learning_rate * delta_w
+
+
+            
 
     def training(self, targets_data, epochs):
         for epoch in range(1, epochs+1):
@@ -47,4 +51,6 @@ if __name__=="__main__":
     nn = NetworkNeural([2,2,1])
     input = np.array([1,1])
     output = nn.feedforward(input)
+    print(output)
     nn.backpropagation(0, output)
+
