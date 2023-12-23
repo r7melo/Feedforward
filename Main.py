@@ -10,39 +10,20 @@ from CG import App, Mouse
 class NetworkNeural:
     
     def __init__(self) -> None:
-        self.data = [[0,0,0],[1,1,1],[-5,0,0]]
-        self.perceptrons = [Perceptron() for i in range(10)]
+        self.data = [[0,0,0],[1,1,1]]
+        self.perceptron = Perceptron()
         self.grid = []
         self.epoch = 0
 
     def training(self):
         while True:
-            for perceptron in self.perceptrons:
-                #region PERCEPTRON LERANING
-                for amostra in self.data:
-                    perceptron.input(amostra[:2])
-                    _y = perceptron.output()
-                    perceptron.correction(amostra[2], _y)
-                #endregion
 
-                for amostra in self.data:
-                    perceptron.input([amostra[0], amostra[1]])
-                    _y = perceptron.output()
-                    if amostra[2] == _y: perceptron.score+=1
-            
-
-            self.perceptrons.sort(key=lambda p: p.score)
-            self.perceptrons.reverse()
-            
-            if self.epoch > 10:
-                self.epoch = 0
-                
-                qtd_death = int(len(self.perceptrons)/2)
-                better = self.perceptrons[0]
-                self.perceptrons = self.perceptrons[:qtd_death] + [Perceptron(w=better.w) for i in range(qtd_death)]
-                for p in self.perceptrons: p.score = 0
-
-            self.epoch += 1
+            #region PERCEPTRON LERANING
+            for amostra in self.data:
+                self.perceptron.input(amostra[:2])
+                _y = self.perceptron.output()
+                self.perceptron.correction(amostra[2], _y)
+            #endregion        
 
             time.sleep(0.1)
 
@@ -50,7 +31,6 @@ class NetworkNeural:
     def update_grid(self):
         while True:
             grid = []
-            perceptron = self.perceptrons.copy()[0]
             proportion = 6/20
             for i in range(-19, 20):
                 for j in range(-19, 20):
@@ -59,8 +39,8 @@ class NetworkNeural:
                     x = i*proportion
                     y = j*proportion
 
-                    perceptron.input([x,y])
-                    _y = perceptron.output()
+                    self.perceptron.input([x,y])
+                    _y = self.perceptron.output()
                     grid.append([x,y,_y])
 
             self.grid = grid
@@ -112,21 +92,6 @@ class Program:
         self.mouse.left_button_activate = left_button_activate
         self.mouse.right_button_activate = right_button_activate
 
-    def save_perceptrons(self):
-        with open('perceptrons.json', 'w') as arquivo:
-            pJson = [
-                {
-                    "bias": p.bias,
-                    "w": [
-                        w for w in p.w    
-                    ],
-                }
-                for p in self.network_neural.perceptrons
-            ]
-            json.dump(pJson, arquivo)
-        
-        threading.Timer(10, self.save_perceptrons).start()
-
 
 if __name__=="__main__":
     
@@ -144,6 +109,5 @@ if __name__=="__main__":
 
     app.start_thread(program.network_neural.training)
     app.start_thread(program.network_neural.update_grid)
-    app.start_thread(program.save_perceptrons)
 
     app.run()
