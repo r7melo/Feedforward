@@ -1,55 +1,30 @@
 import json
-import threading
-import time
+import pygame
 from OpenGL.GL import *
-from Perceptron import Perceptron
-from CG import App, Mouse
-import numpy as np
+from CG import App
+from network_neural import NetworkNeural
 
-class NetworkNeural:
-    def __init__(self, sizes) -> None:
-        self.num_layers = len(sizes)
-        self.sizes = sizes
-        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
-        self.weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
-    
-    def sigmoid(self, z):
-        return 1/(1+np.exp(-z))
-    
-    def feedforward(self, a):
-        for b, w in zip(self.biases, self.weights):
-            a = self.sigmoid((w @ input) + b)
-        return a
 
 
 
 
 class Program:
     def __init__(self):
-        self.mouse:Mouse
         self.network_neural:NetworkNeural
-            
-    def init_mouse(self):
 
-        def left_button_activate(pos):
-            x = (pos[0]-250)/35
-            y = (pos[1]-250)/-35
-            self.network_neural.data.append([x,y,1])
 
-        def right_button_activate(pos):
-            x = (pos[0]-250)/35
-            y = (pos[1]-250)/-35
-            self.network_neural.data.append([x,y,0])
-                
-        self.mouse.left_button_activate = left_button_activate
-        self.mouse.right_button_activate = right_button_activate
+    def mouse_button_up(self, event):
+        if event.button == 1:
+            print(f"Left: {event.pos}")
+        elif event.button == 3:
+            print(f"Right: {event.pos}")
 
     def save_perceptrons(self):
         with open('modelo.json', 'w') as arquivo:
             pJson = []
             json.dump(pJson, arquivo)
-        
-        threading.Timer(10, self.save_perceptrons).start()
+            print("salvo!")
+
 
 
 if __name__=="__main__":
@@ -57,17 +32,12 @@ if __name__=="__main__":
     app = App()
     app.screenSize = (500, 500)
 
+    
+
     program = Program()
-    program.mouse = Mouse()
-    program.network_neural = NetworkNeural()
+    program.network_neural = NetworkNeural([2,2,1])
 
-    app.mouse = program.mouse
-    program.init_mouse()
-
-    app.render.append(program.network_neural)
-
-    app.start_thread(program.network_neural.training)
-    app.start_thread(program.network_neural.update_grid)
-    app.start_thread(program.save_perceptrons)
+    app.event_actions[pygame.MOUSEBUTTONUP] = [program.mouse_button_up]
+    app.start_thread(program.save_perceptrons, delay=10)
 
     app.run()
